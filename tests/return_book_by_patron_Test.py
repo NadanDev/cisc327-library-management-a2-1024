@@ -12,6 +12,8 @@ from database import (
 
 def test_return_book_valid():
     """Test returning a book with valid input."""
+    reset_test_additions()
+
     borrow_book_by_patron("123456", 1) # Borrow a book to return
     success, message = return_book_by_patron("123456", 1)
     
@@ -20,50 +22,46 @@ def test_return_book_valid():
     assert success == True
     assert "Successfully returned" in message
 
-    reset_test_additions()
-
 def test_return_book_invalid_patronid():
     """Test returning a book with invalid patron ID"""
+    reset_test_additions()
+
     success, message = return_book_by_patron("12345", 1)
 
     assert success == False
     assert "6 digits" in message
 
-    reset_test_additions()
-
 def test_return_book_invalid_not_borrowed():
     """Test returning a book that was not borrowed"""
+    reset_test_additions()
+
     success, message = return_book_by_patron("123456", 2)
 
     assert success == False
     assert "not borrowed" in message
 
-    reset_test_additions()
-
 def test_return_book_invalid_wrong_patron():
     """Test returning a book that another patron borrowed"""
+    reset_test_additions()
+
     borrow_book_by_patron("123456", 1)
     success, message = return_book_by_patron("654321", 1)
 
     assert success == False
     assert "not borrowed" in message
 
-    reset_test_additions()
-
 def test_return_book_invalid_ID():
     """Test returning a book that doesn't exist"""
+    reset_test_additions()
+
     success, message = return_book_by_patron("123456", 99)
 
     assert success == False
     assert "not found" in message
 
-    reset_test_additions()
-
 
 
 if (__name__ == "__main__"):
-    reset_test_additions() # Function to reset the book and borrow records added by these tests
-
     test_return_book_valid()
     test_return_book_invalid_patronid()
     test_return_book_invalid_not_borrowed()

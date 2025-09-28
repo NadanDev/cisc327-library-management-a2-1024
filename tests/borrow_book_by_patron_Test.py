@@ -12,6 +12,8 @@ from database import (
 
 def test_borrow_book_valid_input():
     """Test borrowing a book with valid input."""
+    reset_test_additions()
+
     success, message = borrow_book_by_patron("123456", 1)
     
     assert(get_book_by_id(1)["available_copies"] == 2) # Updates available copies properly (starts with 3 and 1 borrowed)
@@ -19,37 +21,36 @@ def test_borrow_book_valid_input():
     assert success == True
     assert "Successfully borrowed" in message
 
-    reset_test_additions()
-
 def test_borrow_book_invalid_patronid():
     """Test borrowing a book with invalid patron ID"""
+    reset_test_additions()
+
     success, message = borrow_book_by_patron("12345", 1)
 
     assert success == False
     assert "6 digits" in message
 
-    reset_test_additions()
-
 def test_borrow_book_invalid_not_found():
     """Test borrowing a book that does not exist"""
+    reset_test_additions()
+
     success, message = borrow_book_by_patron("123456", 4) # Book ID 4 does not exist
 
     assert success == False
     assert "not found" in message
 
-    reset_test_additions()
-
 def test_borrow_book_invalid_not_available():
     """Test borrowing a book with 0 available copies"""
+    reset_test_additions()
+
     success, message = borrow_book_by_patron("123456", 3) # Book ID 3 has no copies available
 
     assert success == False
     assert "not available" in message
 
-    reset_test_additions()
-
 def test_borrow_book_invalid_too_many():
     """Test borrowing a book with 5 books already borrowed"""
+    reset_test_additions()
 
     # Fill borrow record
     borrow_book_by_patron("123456", 1)
@@ -69,13 +70,9 @@ def test_borrow_book_invalid_too_many():
     assert success == False
     assert "maximum borrowing" in message
 
-    reset_test_additions()
-
 
 
 if (__name__ == "__main__"):
-    reset_test_additions() # Function to reset the borrow records added by these tests
-
     test_borrow_book_valid_input()
     test_borrow_book_invalid_patronid()
     test_borrow_book_invalid_not_found

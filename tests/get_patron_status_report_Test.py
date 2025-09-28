@@ -12,6 +12,8 @@ from datetime import datetime, timedelta
 
 def test_patron_status_with_book():
     """Test patron status report with 1 borrowed book (no late fees)"""
+    reset_test_additions()
+
     due_date = datetime.now() + timedelta(days=14)
     insert_borrow_record("123456", 1, datetime.now(), due_date)
 
@@ -22,22 +24,22 @@ def test_patron_status_with_book():
     assert results["books"][1]["due_date"] == due_date
     assert results["total_late_fees"] == 0.00
 
-    reset_test_additions()
-
 
 def test_patron_status_no_books():
     """Test patron status report with no borrowed books"""
+    reset_test_additions()
+
     results = get_patron_status_report("654321")
 
     assert results["num_books_borrowed"] == 0
     assert results["books"] == []
     assert results["total_late_fees"] == 0.00
 
-    reset_test_additions()
-
 
 def test_patron_status_with_late_fees():
     """Test patron status report with an overdue book"""
+    reset_test_additions()
+
     due_date = datetime.now() - timedelta(days=20)
     insert_borrow_record("654321", 3, datetime.now(), due_date)
 
@@ -48,10 +50,10 @@ def test_patron_status_with_late_fees():
     assert results["books"][0]["due_date"] == due_date
     assert results["total_late_fees"] == 15.00
 
-    reset_test_additions()
-
 def test_patron_status_with_mix():
     """Test patron status report with with a mix of books"""
+    reset_test_additions()
+
     due_date1 = datetime.now() - timedelta(days=4)
     insert_borrow_record("567890", 2, datetime.now(), due_date1)
 
@@ -67,31 +69,27 @@ def test_patron_status_with_mix():
     assert (results["books"][0]["due_date"] == due_date2 or results["books"][1]["due_date"] == due_date2)
     assert results["total_late_fees"] == 2.00
 
-    reset_test_additions()
-
 
 def test_patron_status_invalid_id():
     """Test patron status report with invalid patron ID."""
+    reset_test_additions()
+
     results = get_patron_status_report("123")
 
     assert results == {}
 
-    reset_test_additions()
-
 def test_patron_status_history():
     """Test patron status report with a previously borrowed book"""
+    reset_test_additions()
+
     return_book_by_patron("123456", 3)
     results = get_patron_status_report("123456")
 
     assert results["borrowing_history"][0]["title"] == "1984"
 
-    reset_test_additions()
-
 
 
 if (__name__ == "__main__"):
-    reset_test_additions() # Function to reset the book and borrow records added by these tests
-
     test_patron_status_with_book()
     test_patron_status_no_books()
     test_patron_status_with_late_fees()
