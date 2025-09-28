@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>📋 Patron Status</h2>
+<p>View your status</p>
+
+<form method="GET" action="{{ url_for('status.patron_status') }}">
+    <div class="form-group">
+        <label for="patron_id">Patron ID *</label>
+        <input type="text" id="patron_id" name="patron_id" pattern="[0-9]{6}" maxlength="6" required
+               value="{{ request.form.patron_id if request.form.patron_id else '' }}">
+        <small style="color: #666;">6-digit library card number</small>
+    </div>
+    <button type="submit" class="btn">Check Status</button>
+</form>
+
+{% if patron_id %}
+    <hr style="margin: 30px 0;">
+    
+    <h3>Status for Patron ID: {{ patron_id }}</h3>
+
+    <p><strong>Total Late Fees Owed:</strong> ${{ "%.2f"|format(status.total_late_fees) }}</p>
+    <p><strong>Currently Borrowed Books:</strong> {{ status.num_books_borrowed }}</p>
+
+    {% if status.books %}
+        <p><strong>Currently Borrowed Borrowed:</strong></p>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>Due Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for book in status.books %}
+                <tr>
+                    <td>{{ book.book_id }}</td>
+                    <td>{{ book.title }}</td>
+                    <td>{{ book.author }}</td>
+                    <td>{{ book.due_date.strftime("%Y-%m-%d") }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p style="color: #666;">No books currently borrowed.</p>
+    {% endif %}
+
+    {% if status.borrowing_history %}
+        <p><strong>Previously Borrowed:</strong></p>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>Borrow Date</th>
+                    <th>Return Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in status.borrowing_history%}
+                <tr>
+                    <td>{{ record.book_id }}</td>
+                    <td>{{ record.title }}</td>
+                    <td>{{ record.author }}</td>
+                    <td>{{ record.borrow_date.strftime("%Y-%m-%d") }}</td>
+                    <td>
+                        {% if record.return_date %}
+                            {{ record.return_date.strftime("%Y-%m-%d") }}
+                        {% else %}
+                            Not Returned
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p style="color: #666;">No borrowing history</p>
+    {% endif %}
+{% endif %}
+
+{% endblock %}
