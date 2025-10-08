@@ -211,7 +211,7 @@ def search_books_in_catalog(search_term: str, search_type: str) -> List[Dict]:
                 search_results.append(book)
     else: # Search partial title or author
         for book in all_books:
-            if search_term.lower() in (book["title"].lower() if search_type == "title" else book["author"]):
+            if search_term.lower() in (book["title"].lower() if search_type == "title" else book["author"].lower()):
                 search_results.append(book)
 
     return search_results
