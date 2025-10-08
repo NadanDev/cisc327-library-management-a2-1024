@@ -69,12 +69,3 @@ def test_borrow_book_invalid_too_many():
 
     assert success == False
     assert "maximum borrowing" in message
-
-
-
-if (__name__ == "__main__"):
-    test_borrow_book_valid_input()
-    test_borrow_book_invalid_patronid()
-    test_borrow_book_invalid_not_found
-    test_borrow_book_invalid_not_available()
-    test_borrow_book_invalid_too_many()

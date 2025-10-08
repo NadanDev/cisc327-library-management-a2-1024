@@ -70,13 +70,3 @@ def test_late_fee_book_not_borrowed():
 
     assert result["days_overdue"] == 0
     assert result["fee_amount"] == 0.00
-
-
-
-if (__name__ == "__main__"):
-    test_late_fee_no_overdue()
-    test_late_fee_4_days_overdue()
-    test_late_fee_10_days_overdue()
-    test_late_fee_20_days_overdue()
-    test_late_fee_invalid_patronid()
-    test_late_fee_book_not_borrowed()

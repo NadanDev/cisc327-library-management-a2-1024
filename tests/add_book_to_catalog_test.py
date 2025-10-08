@@ -88,16 +88,3 @@ def test_add_book_valid_edge_case():
 
     assert success == True
     assert "successfully added" in message
-
-
-
-if (__name__ == "__main__"):
-    test_add_book_valid_input()
-    test_add_book_invalid_isbn_too_short()
-    test_add_book_invalid_total_copies_negative()
-    test_add_book_invalid_title_long()
-    test_add_book_invalid_author_long()
-    test_add_book_invalid_isbn_duplicate()
-    test_add_book_invalid_no_title()
-    test_add_book_invalid_no_author()
-    test_add_book_valid_edge_case()

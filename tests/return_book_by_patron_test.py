@@ -58,12 +58,3 @@ def test_return_book_invalid_ID():
 
     assert success == False
     assert "not found" in message
-
-
-
-if (__name__ == "__main__"):
-    test_return_book_valid()
-    test_return_book_invalid_patronid()
-    test_return_book_invalid_not_borrowed()
-    test_return_book_invalid_wrong_patron()
-    test_return_book_invalid_ID()

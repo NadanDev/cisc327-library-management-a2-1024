@@ -51,12 +51,3 @@ def test_search_books_wrong_isbn():
     results = search_books_in_catalog("123", "isbn")
 
     assert results == []
-
-
-
-if (__name__ == "__main__"):
-    test_search_books_title_partial()
-    test_search_books_by_author_partial()
-    test_search_books_by_isbn_exact()
-    test_search_books_no_results()
-    test_search_books_wrong_isbn()

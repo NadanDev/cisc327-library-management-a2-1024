@@ -86,13 +86,3 @@ def test_patron_status_history():
     results = get_patron_status_report("123456")
 
     assert results["borrowing_history"][0]["title"] == "1984"
-
-
-
-if (__name__ == "__main__"):
-    test_patron_status_with_book()
-    test_patron_status_no_books()
-    test_patron_status_with_late_fees()
-    test_patron_status_with_mix()
-    test_patron_status_invalid_id()
-    test_patron_status_history()
