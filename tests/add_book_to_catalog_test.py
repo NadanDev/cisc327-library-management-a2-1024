@@ -14,7 +14,7 @@ def test_add_book_valid_input():
     success, message = add_book_to_catalog("Test Book", "Test Author", "1234567890123", 5)
     
     assert success == True
-    assert "successfully addeddd" in message
+    assert "successfully added" in message
 
 def test_add_book_invalid_isbn_too_short():
     """Test adding a book with ISBN too short."""
