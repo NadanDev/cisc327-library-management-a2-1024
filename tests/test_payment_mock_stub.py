@@ -10,12 +10,14 @@ from services.payment_service import (
 
 def test_pay_late_fees_valid(mocker):
     """Test a valid payment by mocking success of the process_payment function and entering correct values"""
-    mocker.patch("services.library_service.calculate_late_fee_for_book", return_value = {"fee_amount": 10.0}) # Stubs for separate calls
-    mocker.patch("services.library_service.get_book_by_id", return_value = {"title": "The Great Gatsby"})
+    # Stubs: returns values for separate functions
+    mocker.patch("services.library_service.calculate_late_fee_for_book", return_value = {"fee_amount": 10.0})
+    mocker.patch("services.library_service.get_book_by_id", return_value = {"title": "The Great Gatsby"}) # Simply do title for simplicity
 
+    # Mocks: return values for PaymentGateway functions
     mock_gateway = Mock(spec=PaymentGateway)
     mock_gateway.process_payment.return_value = (True, "txn_123", "Success")
-    success, msg, txn = pay_late_fees("123456", 1, mock_gateway)
+    success, msg, txn = pay_late_fees("123456", 1, mock_gateway) # Call the function
 
     assert success is True
     assert "Payment successful!" in msg
@@ -47,6 +49,8 @@ def test_pay_late_fees_invalid_patronid(mocker):
     mocker.patch("services.library_service.get_book_by_id", return_value = {"title": "The Great Gatsby"})
 
     mock_gateway = Mock(spec=PaymentGateway)
+    # Shouldn't need this line but keep it in case pay_late_fees didn't fail as expected (same with other functions)
+    mock_gateway.process_payment.return_value = (False, "", "Shouldn't Reach")
     success, msg, txn = pay_late_fees("12345", 1, mock_gateway)
 
     assert success is False
@@ -62,6 +66,7 @@ def test_pay_late_fees_zero_late_fee(mocker):
     mocker.patch("services.library_service.get_book_by_id", return_value = {"title": "The Great Gatsby"})
 
     mock_gateway = Mock(spec=PaymentGateway)
+    mock_gateway.process_payment.return_value = (False, "", "Shouldn't Reach")
     success, msg, txn = pay_late_fees("123456", 1, mock_gateway)
 
     assert success is False
@@ -90,8 +95,10 @@ def test_pay_late_fees_network_error(mocker):
 def test_pay_late_fees_invalid_fee_info(mocker):
     """Test pay_late_fees failure where calculate_late_fee_for_book fails"""
     mocker.patch("services.library_service.calculate_late_fee_for_book", return_value = {"fee_not_amount": 10.0})
+    mocker.patch("services.library_service.get_book_by_id", return_value = {"title": "The Great Gatsby"})
 
     mock_gateway = Mock(spec=PaymentGateway)
+    mock_gateway.process_payment.return_value = (False, "", "Shouldn't Reach")
     success, msg, txn = pay_late_fees("123456", 1, mock_gateway)
 
     assert success is False
@@ -106,6 +113,7 @@ def test_pay_late_fees_invalid_no_book(mocker):
     mocker.patch("services.library_service.get_book_by_id", return_value = None)
 
     mock_gateway = Mock(spec=PaymentGateway)
+    mock_gateway.process_payment.return_value = (False, "", "Shouldn't Reach")
     success, msg, txn = pay_late_fees("123456", 1, None)
 
     assert success is False
@@ -132,6 +140,7 @@ def test_refund_late_fee_valid():
 def test_refund_late_fee_invalid_transactionid():
     """Test an invalid refund by passing an invalid transaction ID"""
     mock_gateway = Mock(spec=PaymentGateway)
+    mock_gateway.refund_payment.return_value = (False, "", "Shouldn't Reach")
     success, msg = refund_late_fee_payment("tx_123", 10.0, mock_gateway)
 
     assert success is False
@@ -143,6 +152,7 @@ def test_refund_late_fee_invalid_transactionid():
 def test_refund_late_fee_zero_amount():
     """Test an invalid refund by passing $0 refund"""
     mock_gateway = Mock(spec=PaymentGateway)
+    mock_gateway.refund_payment.return_value = (False, "", "Shouldn't Reach")
     success, msg = refund_late_fee_payment("txn_123", 0, mock_gateway)
 
     assert success is False
@@ -153,6 +163,7 @@ def test_refund_late_fee_zero_amount():
 def test_refund_late_fee_negative_amount():
     """Test an invalid refund by passing negative refund"""
     mock_gateway = Mock(spec=PaymentGateway)
+    mock_gateway.refund_payment.return_value = (False, "", "Shouldn't Reach")
     success, msg = refund_late_fee_payment("txn_123", -1, mock_gateway)
 
     assert success is False
@@ -163,6 +174,7 @@ def test_refund_late_fee_negative_amount():
 def test_refund_late_fee_exceed_max_amount():
     """Test an invalid refund by passing refund beyond the max of 15"""
     mock_gateway = Mock(spec=PaymentGateway)
+    mock_gateway.refund_payment.return_value = (False, "", "Shouldn't Reach")
     success, msg = refund_late_fee_payment("txn_123", 16, mock_gateway)
 
     assert success is False
@@ -179,7 +191,6 @@ def test_refund_late_fee_error():
 
     assert success is False
     assert "Refund processing error" in msg
-
 
     mock_gateway.refund_payment.assert_called_once()
     mock_gateway.refund_payment.assert_called_with("txn_123", 10.0)
