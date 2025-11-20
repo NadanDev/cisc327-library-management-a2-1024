@@ -36,6 +36,8 @@ jobs:
           python -m pip install --upgrade pip
           pip install pytest pytest-cov
           pip install pytest-mock
+          pip install pytest-playwright
+          playwright install
           pip install requests
           pip install -r requirements.txt
 
