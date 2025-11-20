@@ -48,19 +48,23 @@ jobs:
           python -m pip install --upgrade pip
           pip install pytest pytest-cov
           pip install pytest-mock
-          if runner.os == 'Linux' then
-            pip install pytest-playwright
-            playwright install
-          fi
           pip install requests
           pip install -r requirements.txt
+
+      - name: Install playwright
+        if: runner.os == 'Linux'
+        run: |
+          pip install pytest-playwright
+          playwright install
 
       - name: Run tests
         run: |
           python -m pytest --cov --cov-report=xml tests/ --ignore=tests/test_e2e.py
-          if runner.os == 'Linux' then
-            python -m pytest tests/test_e2e.py
-          fi
+        
+      - name: Run test_e2e
+        if: runner.os == 'Linux'
+        run: |
+          python -m pytest tests/test_e2e.py
 
       - name: Stop Docker
         if: runner.os == 'Linux'
