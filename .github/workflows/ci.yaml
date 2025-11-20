@@ -32,12 +32,15 @@ jobs:
           python-version: ${{ matrix.python-version }}
         
       - name: Build Docker
+        if: runner.os == 'Linux'
         run: docker build -t library-app .
 
       - name: Run Docker
+        if: runner.os == 'Linux'
         run: docker run -p 5000:5000 library-app
 
       - name: Wait for Docker to be ready
+        if: runner.os == 'Linux'
         run: sleep 5
 
       - name: Install dependencies
@@ -52,9 +55,14 @@ jobs:
 
       - name: Run tests
         run: |
-          python -m pytest --cov --cov-report=xml tests/
+          python -m pytest --cov --cov-report=xml tests/ --ignore=tests/test_e2e.py
+          if runner.os == 'Linux'
+          then
+            python -m pytest tests/test_e2e.py
+          fi
 
       - name: Stop Docker
+        if: runner.os == 'Linux'
         run: docker stop library-app && docker rm library-app
 
       - name: Upload coverage reports to Codecov
