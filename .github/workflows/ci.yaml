@@ -37,7 +37,7 @@ jobs:
 
       - name: Run Docker
         if: runner.os == 'Linux'
-        run: docker run -d -p 5000:5000 library-app
+        run: docker run -d -p 5000:5000 --name library-app library-app
 
       - name: Wait for Docker to be ready
         if: runner.os == 'Linux'
